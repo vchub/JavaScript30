@@ -50,6 +50,10 @@ onmessage = (event) => {
     case 'add':
       add(db, event.data);
       break;
+
+    case 'del':
+      del(db, event.data);
+      break;
     default:
       pr('worker.setupDispatch.default', event.data);
   }
@@ -71,7 +75,10 @@ function add(db, data) {
 
   req.onsuccess = (e) => {
     const res = { data: e.target.result, op: 'addDone', error: '' };
-    pr('addDone', res);
+    postMessage(res);
+  };
+  req.onerror = (e) => {
+    const res = { data: e.target.result, op: 'addDone', error: e.target.error };
     postMessage(res);
   };
 }
@@ -95,5 +102,29 @@ function get(db, data) {
     const item = cursor.value;
     if (item.key.match(r)) items.push(item);
     cursor.continue();
+  };
+}
+
+function del(db, data) {
+  const { path, obj } = data;
+  if (path === 'place') {
+    obj.key = key(obj);
+  }
+
+  const transaction = db.transaction([path], 'readwrite');
+  const objectStore = transaction.objectStore(path);
+  const req = objectStore.delete(obj.key);
+
+  req.onsuccess = (e) => {
+    const res = { data: e.target.result, op: 'delDone', error: '' };
+    postMessage(res);
+  };
+  req.onerror = (e) => {
+    const res = {
+      data: e.target.result,
+      op: 'delDone',
+      error: e.target.error,
+    };
+    postMessage(res);
   };
 }

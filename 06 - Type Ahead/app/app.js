@@ -1,7 +1,6 @@
+import { Suggestions } from './components.js';
 // Utilities Start ====================
 const pr = console.log;
-
-const Element = (tag) => document.createElement(tag);
 // Utilities End ====================
 
 // App Start ====================
@@ -38,79 +37,141 @@ export class Place {
   }
 }
 
-export class App extends EventRegistry {
-  constructor(db) {
-    super();
-    this.db = db;
-    // this._places = [];
-    this.setupDispatch();
+export const App = new EventRegistry();
+App.filter = '';
+
+App.setupDispatch = () => {
+  pr('App.setupDispatch App:', App);
+  App.db.onmessage = (e) => {
+    const { op, error } = e.data;
+    pr(op, 'data:', e.data);
+    switch (op) {
+      case 'addDone':
+        if (!error) {
+          App.getPlaces(App.filter);
+          App.fire({ name: 'addCity success', data: e.data });
+        } else {
+          App.fire({ name: 'addCity error', error: e.data.error.message });
+        }
+        break;
+      case 'delDone':
+        if (!error) {
+          App.getPlaces(App.filter);
+        } else {
+          App.fire({ name: 'delCity error', error: e.data.error.message });
+        }
+        break;
+      case 'getDone':
+        App.fire({ name: 'placesChange', data: e.data });
+        break;
+      default:
+        pr('App.onmessage.default');
+    }
+  };
+};
+
+App.getPlaces = (pattern) => {
+  const msg = { op: 'get', path: 'place', pattern: pattern };
+  pr('App.getPlaces msg:', msg);
+  App.db.postMessage(msg);
+};
+
+App.filterChange = (pattern) => {
+  App.filter = pattern;
+  App.getPlaces(pattern);
+  pr('App.filterChange pattern:', pattern);
+  App.fire({ name: 'filterChange', filter: pattern });
+};
+
+App.addCity = (str) => {
+  const [city, st] = str
+    .toLowerCase()
+    .split(',')
+    .map((x) => x.trim());
+  if (city && st) {
+    App.db.postMessage({ op: 'add', path: 'place', obj: new Place(city, st) });
   }
+};
 
-  setupDispatch() {
-    this.db.onmessage = (e) => {
-      const { op } = e.data;
-      // pr('App.onmessage', e);
-      pr(op, 'data:', e.data);
-      switch (op) {
-        case 'addDone':
-          this.fire({ name: 'PlacesChange', data: e.data });
-          break;
-        case 'getDone':
-          this.fire({ name: 'PlacesChange', data: e.data });
-          break;
-        default:
-          pr('App.onmessage.default');
-      }
-    };
-  }
+App.delCity = (city, st) => {
+  App.db.postMessage({ op: 'del', path: 'place', obj: new Place(city, st) });
+};
 
-  // str ->
-  filterChange(pattern) {
-    this.db.postMessage({ op: 'get', path: 'place', pattern: pattern });
-    this.fire({ name: 'filterChange', filter: pattern });
-    // const r = new RegExp(pattern, 'gi'),
-    //   res = [];
-    // this._places.forEach((v, k) => {
-    //   if (k.match(r)) res.push(v);
-    // });
-    // return res;
-  }
+App.init = () => {
+  App.db = new Worker('store-worker.js');
+  App.setupDispatch();
 
-  // str ->
-  addCity(str) {
-    const [city, st] = str
-      .toLowerCase()
-      .split(',')
-      .map((x) => x.trim());
-    this.db.postMessage({ op: 'add', path: 'place', obj: new Place(city, st) });
-
-    // const key = this.key(city, st),
-    //   place = { city: city, st: st };
-    // if (this._places.has(key)) return { place: null, err: 'key exists' };
-    // this._places.set(key, place);
-    // this.eReg.fireEvent({ name: 'PlacesChange', city: city, st: st });
-    // return { place: place, err: '' };
-  }
-
-  // str, str -> err: str
-  delCity(city, st) {
-    pr(city, st);
-    this._places.delete(this.key(city, st));
-    this.eReg.fireEvent({
-      name: 'PlacesChange',
-      city: city,
-      st: st,
-      details: 'delete',
+  const suggestionsDiv = document.querySelector('.suggestions');
+  App.listen('placesChange', ({ data }) => {
+    const places = data.data;
+    pr('suggestionsDiv, placesChange, data:', data, places);
+    const component = Suggestions({
+      places: places,
+      onDel: (city, st) => App.delCity(city, st),
+      onEdit: (city, st) => App.editCity(city, st),
     });
-  }
+    render(suggestionsDiv, component);
+  });
 
-  // str, str -> err: str
-  editCity(city, st) {
-    pr(city, st);
-  }
+  // filters
+  // TODO: throttle keyup events for 200ms //
+  document.querySelectorAll('.filter').forEach((el) => {
+    el.addEventListener('keyup', (e) => App.filterChange(e.target.value));
+    App.listen('filterChange', ({ filter }) => {
+      if (el.value !== filter) el.value = filter;
+    });
+  });
+
+  // add city
+  const addInp = document.querySelector('.add');
+  addInp.addEventListener('change', (e) => App.addCity(e.target.value));
+  App.listen('addCity success', () => {
+    addInp.value = '';
+  });
+  App.listen('addCity error', (e) => {
+    addInp.value = e.error;
+  });
+
+  //   const { place, err } = App.addCity(e.target.value);
+  //   if (err) {
+  //     pr('Error', err);
+  //     return;
+  //   }
+  //   const event = { name: 'PlacesChange', place: place };
+  //   App.eReg.fireEvent(event);
+  //   e.target.value = '';
+  // });
+};
+
+// Element, Element -> DOM Effect
+function render(root, component) {
+  root.replaceChildren(component);
 }
 
-export const app = new App(new Worker('store-worker.js'));
+// App End ====================
+
+// App Run ====================
+App.init();
+
+// e//   // str, str -> err: str
+//   delCity(city, st) {
+//     pr(city, st);
+//     this._places.delete(this.key(city, st));
+//     this.eReg.fireEvent({
+//       name: 'placesChange',
+//       city: city,
+//       st: st,
+//       details: 'delete',
+//     });
+//   }
+
+//   // str, str -> err: str
+//   editCity(city, st) {
+//     pr(city, st);
+//   }
+// }
+
+// export const app = new App(new Worker('store-worker.js'));
 // App End ====================
 
 // store-worker Start ====================
