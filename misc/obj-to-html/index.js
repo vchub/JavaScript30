@@ -50,8 +50,33 @@ function fromObject(obj) {
   return el;
 }
 
+// str -> obj
+export const count = (input) => {
+  const res = {};
+  for (const k of input.split('')) {
+    if (res[k]) {
+      res[k]++;
+    } else {
+      res[k] = 1;
+    }
+  }
+  return res;
+};
+
+// main ====================
+export function main() {
+  const root = document.querySelector('#result'),
+    input = document.querySelector('#input');
+  input.addEventListener('keyup', (e) => {
+    const el = toHtml(count(input.value));
+    pr(el);
+    root.replaceChildren(el);
+  });
+}
+// main end ====================
+
 // tests ====================
-function runInTest() {
+export function runInTest() {
   const d1 = document.querySelector('#_1'),
     o1 = 100,
     el1 = toHtml(o1);
@@ -64,5 +89,5 @@ function runInTest() {
   d2.replaceChildren(el2);
 }
 
-runInTest();
+// runInTest();
 // tests end ====================

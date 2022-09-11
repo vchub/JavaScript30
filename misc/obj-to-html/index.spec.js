@@ -1,5 +1,5 @@
 const assert = chai.assert;
-import { toHtml } from './index.js';
+import { toHtml, runInTest, count } from './index.js';
 
 const pr = console.log;
 
@@ -17,4 +17,11 @@ describe('toHtml', () => {
     res = toHtml(obj);
     pr('res', res);
   });
+
+  it('count should count', () => {
+    assert.deepEqual({ a: 1, b: 2 }, count('bab'));
+    assert.deepEqual({ a: 3, b: 2 }, count('abaab'));
+  });
 });
+
+runInTest();
