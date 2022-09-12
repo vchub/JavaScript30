@@ -1,0 +1,18 @@
+div.mycontent {
+  margin: 20px;
+}
+
+.obj ul {
+  padding: 2px;
+}
+
+.obj li {
+  display: flex;
+}
+
+.array {
+  display: flex;
+}
+.colon {
+  margin: 0 10px;
+}
