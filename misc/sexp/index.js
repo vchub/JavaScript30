@@ -17,10 +17,10 @@ class Sexp {
 }
 
 // Sexp types
-const Symb = Symbol('Symb'),
-  Num = Symbol('Num'),
-  Str = Symbol('Str'),
-  List = Symbol('List');
+const Symb = 'Symb',
+  Num = 'Num',
+  Str = 'Str',
+  List = 'List';
 
 // ====================
 
@@ -93,7 +93,28 @@ export function tokenize(s) {
 // }
 
 // parse: str -> Sexp
-const parse = (s) => {};
+function parse(s) {
+  const g = tokenizer(s);
+  // generator -> Sexp
+  function loop(acc) {
+    let { value, done } = g.next();
+    for (; !done; { value, done } = g.next()) {
+      pr('value', value, 'done', done);
+
+      if (value === '(') acc.push(new Sexp(List, loop([])));
+      else if (value === ')') return acc;
+      else if (str(value)) acc.push(new Sexp(Str, value));
+      else if (num(value)) acc.push(new Sexp(Num, Number(value)));
+      else acc.push(new Sexp(Symb, value));
+    }
+
+    return acc;
+  }
+  const str = (value) => value.startsWith('"');
+  const num = (value) => Number(value);
+
+  return loop([]);
+}
 
 // ====================
 

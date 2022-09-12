@@ -44,10 +44,30 @@ describe('tokenizing', () => {
     assert.deepEqual(['a', '"x (yz)"'], tokenize(' a "x (yz)"  '));
   });
 
-  xit('nextToken basics', () => {
-    assert.deepEqual([new Sexp(Symb, 'x'), ''], nextToken(' x'));
-    assert.deepEqual([new Sexp(Str, 'x'), ' yz'], nextToken(' "x" yz'));
-    assert.deepEqual([new Sexp(Str, 'x yz'), ' 24'], nextToken(' "x yz" 24'));
+  it('parse', () => {
+    assert.deepEqual([new Sexp(Symb, 'x')], parse(' x'));
+
+    let s = 'x 3.14 "foo 10" z',
+      exp = [
+        new Sexp(Symb, 'x'),
+        new Sexp(Num, 3.14),
+        new Sexp(Str, '"foo 10"'),
+        new Sexp(Symb, 'z'),
+      ],
+      res = parse(s);
+    // pr(exp);
+    // pr(res);
+    assert.deepEqual(exp, res);
+
+    s = '(x 3.14) "foo 10" z';
+    (exp = [
+      new Sexp(List, [new Sexp(Symb, 'x'), new Sexp(Num, 3.14)]),
+      new Sexp(Str, '"foo 10"'),
+      new Sexp(Symb, 'z'),
+    ]),
+      (res = parse(s));
+    pr(exp);
+    pr(res);
   });
 });
 
@@ -56,10 +76,7 @@ const c = `ab
  			fg
 			`;
 
-pr(c.split(' '));
-pr(c.split(/\s/));
-pr(c.indexOf(/\S/));
-pr(c.indexOf(/c/));
-pr(c.indexOf('c'));
-pr(c);
-pr('\t x '.match(/\S/));
+// const t = tokenizer('x "yz"');
+// pr(t.next());
+// pr(t.next());
+// pr(t.next());
