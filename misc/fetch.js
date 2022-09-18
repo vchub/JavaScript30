@@ -59,3 +59,21 @@ function streamBlob0(blob, params) {
 }
 
 // intervalId = setInterval(() => download(url), 1000);
+
+// fetch or embed text ====================
+let S = null;
+function getJson(href, root) {
+  fetch(href)
+    .then((response) => response.text())
+    .then((text) => {
+      root.textContent = text;
+      pr(text);
+      // const obj = eval(text);
+      S = JSON.parse(text);
+      pr(S);
+    });
+}
+getJson('./data.json', document.querySelector('#text'));
+
+let el = document.querySelector('#embed');
+pr('try to get from embed: ', document.querySelector('#embed'));
