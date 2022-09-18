@@ -5,15 +5,16 @@
     <title>Mocha Tests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" /> -->
-    <link rel="stylesheet" href="./mocha/mocha.css" />
+    <link rel="stylesheet" href="../mocha/mocha.css" />
+    <link rel="stylesheet" href="./main.css" />
   </head>
   <body>
     <div id="mocha"></div>
 
     <!-- <script src="https://unpkg.com/chai/chai.js"></script> -->
     <!-- <script src="https://unpkg.com/mocha/mocha.js"></script> -->
-    <script src="./mocha/chai.js"></script>
-    <script src="./mocha/mocha.js"></script>
+    <script src="../mocha/chai.js"></script>
+    <script src="../mocha/mocha.js"></script>
 
     <script class="mocha-init" type="module">
       mocha.setup('bdd');
@@ -21,20 +22,14 @@
     </script>
 
     <!-- <script src="app.js" type="module"></script> -->
-    <script src="obj-to-html.spec.js" type="module"></script>
+    <script src="index.spec.js" type="module"></script>
     <script class="mocha-exec" type="module">
       mocha.run();
     </script>
 
-    <style type="text/css" media="screen">
-      .content {
-        margin: 20px;
-      }
-    </style>
-    <div class="content">
+    <div class="mycontent">
       <div id="_1">_1</div>
       <div id="_2">_2</div>
     </div>
-    <script src="obj-to-html.js" type="module"></script>
   </body>
 </html>

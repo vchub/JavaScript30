@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="content">
+      <div class="utils">
+        <label for="fitler2">2nd filter</label>
+        <input
+          id="fitler2"
+          class="filter"
+          type="text"
+          placeholder="Search City or State"
+        />
+      </div>
+      <form class="search-form">
+        <input type="text" class="add" placeholder="Add City, State" />
+        <input
+          type="text"
+          class="search filter"
+          placeholder="Search City or State"
+        />
+      </form>
+      <div class="suggestions">
+        <ul>
+          <li>Filter for a city</li>
+          <li>or a state</li>
+        </ul>
+      </div>
+    </div>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
