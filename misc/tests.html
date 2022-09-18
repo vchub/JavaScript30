@@ -15,14 +15,13 @@
     <script src="./mocha/chai.js"></script>
     <script src="./mocha/mocha.js"></script>
 
-    <script class="mocha-init" type="module">
+    <script class="mocha-init">
       mocha.setup('bdd');
       mocha.checkLeaks();
     </script>
 
-    <!-- <script src="app.js" type="module"></script> -->
-    <script src="obj-to-html.spec.js" type="module"></script>
-    <script class="mocha-exec" type="module">
+    <script src="probab.spec.js"></script>
+    <script class="mocha-exec">
       mocha.run();
     </script>
 
@@ -31,10 +30,5 @@
         margin: 20px;
       }
     </style>
-    <div class="content">
-      <div id="_1">_1</div>
-      <div id="_2">_2</div>
-    </div>
-    <script src="obj-to-html.js" type="module"></script>
   </body>
 </html>
