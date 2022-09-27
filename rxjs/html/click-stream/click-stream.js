@@ -1,5 +1,5 @@
 const pr = console.log;
-let { range, filter, map } = rxjs;
+// let { range, filter, map } = rxjs;
 
 // range(1, 13)
 //   .pipe(
@@ -8,32 +8,73 @@ let { range, filter, map } = rxjs;
 //   )
 //   .subscribe((x) => pr(x));
 
-const sq = document.querySelector('#square');
+class ClickStream {
+  constructor(element, cb = (e) => [e]) {
+    this.element = element;
+    this.cb = cb;
+    this.cb0 = false;
+    element.addEventListener('click', (e) => this.cb(e));
+  }
 
-function makeClickQueue(element) {
-  const queue = [];
-  element.addEventListener('click', (e) => {
-    pr('e', e);
-    const { clientX, clientY } = e;
-    queue.push([clientX, clientY]);
-  });
-  return queue;
-}
+  subscribe(cb) {
+    const cb0 = this.cb;
+    this.cb = (e) => cb0(e).map(cb);
+    return this;
+  }
 
-let clQueue = makeClickQueue(sq);
+  filter(pred) {
+    const cb0 = this.cb;
+    this.cb = (e) => cb0(e).filter(pred);
+    return this;
+  }
 
-function* makeClickGen(element) {
-  const queue = [];
-  element.addEventListener('click', (e) => {
-    // const { clientX, clientY } = e;
-    const { x, y } = e;
-    queue.push([clientX, clientY]);
-  });
-  while (true) {
-    yield queue.shift();
+  map(fn) {
+    const cb0 = this.cb;
+    this.cb = (e) => cb0(e).map(fn);
+    return this;
+  }
+
+  debounce(period) {
+    const cb0 = this.cb;
+    this.cb = (e) => {
+      if (this.cb0) return;
+      const res = cb0(e);
+      this.cb0 = this.cb;
+      this.cb = () => {};
+      setTimeout(() => {
+        this.cb = this.cb0;
+        this.cb0 = null;
+      }, period);
+      return res;
+    };
+    return this;
   }
 }
 
-let clGen = makeClickGen(sq);
+// run it
+const div = document.querySelector('.mycontent');
 
-sq.click({ clientX: 10, clientY: 20 });
+const cs = new ClickStream(div);
+cs.map((e) => [e.clientX, e.clientY])
+  .filter(([x, y]) => x != y)
+  .subscribe((e) => {
+    pr('subscribe 0, e', e);
+    return e;
+  })
+  .debounce(1000)
+  .map(([x, y]) => x + y)
+  .subscribe((e) => {
+    pr('subscribe 1, e', e);
+    return e;
+  });
+
+let clicks = [
+  [10, 20],
+  [0, 0],
+  [3, 5],
+  [5, 5],
+].forEach(([x, y]) =>
+  div.dispatchEvent(new MouseEvent('click', { clientX: x, clientY: y })),
+);
+
+export { ClickStream };
