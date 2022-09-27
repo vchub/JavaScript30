@@ -13,10 +13,10 @@
 
     <!-- <script src="https://unpkg.com/chai/chai.js"></script> -->
     <!-- <script src="https://unpkg.com/mocha/mocha.js"></script> -->
-    <script src="mocha/chai.js" type="module"></script>
-    <script src="mocha/mocha.js" type="module"></script>
+    <script src="mocha/chai.js"></script>
+    <script src="mocha/mocha.js"></script>
 
-    <script class="mocha-init" type="module">
+    <script class="mocha-init">
       mocha.setup('bdd');
       mocha.checkLeaks();
     </script>
@@ -24,9 +24,7 @@
     <!-- libs -->
     <script src="../../blib/rxjs.umd.min.js"></script>
 
-    <!-- specs -->
-    <script src="a.spec.js" type="module"></script>
-    <script class="mocha-exec" type="module">
+    <script class="mocha-exec">
       mocha.run();
     </script>
 
@@ -34,5 +32,8 @@
       <div id="_1">_1</div>
       <div id="_2">_2</div>
     </div>
+
+    <!-- specs -->
+    <script src="a.spec.js"></script>
   </body>
 </html>

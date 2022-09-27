@@ -10,13 +10,30 @@ let { range, filter, map } = rxjs;
 
 const sq = document.querySelector('#square');
 
-function makeClickStream(element) {
+function makeClickQueue(element) {
   const queue = [];
   element.addEventListener('click', (e) => {
+    pr('e', e);
     const { clientX, clientY } = e;
     queue.push([clientX, clientY]);
   });
   return queue;
 }
 
-let clickcoords = makeClickStream(sq);
+let clQueue = makeClickQueue(sq);
+
+function* makeClickGen(element) {
+  const queue = [];
+  element.addEventListener('click', (e) => {
+    // const { clientX, clientY } = e;
+    const { x, y } = e;
+    queue.push([clientX, clientY]);
+  });
+  while (true) {
+    yield queue.shift();
+  }
+}
+
+let clGen = makeClickGen(sq);
+
+sq.click({ clientX: 10, clientY: 20 });
