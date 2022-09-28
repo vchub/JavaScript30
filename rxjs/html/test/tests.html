@@ -6,9 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" /> -->
     <link rel="stylesheet" href="mocha/mocha.css" />
-    <!-- <link rel="stylesheet" href="./main.css" /> -->
   </head>
   <body>
+    <!-- elements for tests -->
+    <link rel="stylesheet" href="./test.css" />
+    <div class="mycontent">
+      <div id="_1">_1</div>
+      <div id="_2">_2</div>
+    </div>
+
     <div id="mocha"></div>
 
     <!-- <script src="https://unpkg.com/chai/chai.js"></script> -->
@@ -24,15 +30,10 @@
     <!-- libs -->
     <script src="../../blib/rxjs.umd.min.js"></script>
 
-    <script src="click-stream.spec.js" type="module"></script>
+    <script src="myobservable.spec.js" type="module"></script>
     <script class="mocha-exec" type="module">
       mocha.run();
     </script>
-
-    <div class="mycontent">
-      <div id="_1">_1</div>
-      <div id="_2">_2</div>
-    </div>
 
     <!-- specs -->
   </body>

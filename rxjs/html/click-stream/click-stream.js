@@ -52,29 +52,31 @@ class ClickStream {
 }
 
 // run it
-const div = document.querySelector('.mycontent');
+export function runClickStreamExample() {
+  const div = document.querySelector('.mycontent');
 
-const cs = new ClickStream(div);
-cs.map((e) => [e.clientX, e.clientY])
-  .filter(([x, y]) => x != y)
-  .subscribe((e) => {
-    pr('subscribe 0, e', e);
-    return e;
-  })
-  .debounce(1000)
-  .map(([x, y]) => x + y)
-  .subscribe((e) => {
-    pr('subscribe 1, e', e);
-    return e;
-  });
+  const cs = new ClickStream(div);
+  cs.map((e) => [e.clientX, e.clientY])
+    .filter(([x, y]) => x != y)
+    .subscribe((e) => {
+      pr('subscribe 0, e', e);
+      return e;
+    })
+    .debounce(1000)
+    .map(([x, y]) => x + y)
+    .subscribe((e) => {
+      pr('subscribe 1, e', e);
+      return e;
+    });
 
-let clicks = [
-  [10, 20],
-  [0, 0],
-  [3, 5],
-  [5, 5],
-].forEach(([x, y]) =>
-  div.dispatchEvent(new MouseEvent('click', { clientX: x, clientY: y })),
-);
+  let clicks = [
+    [10, 20],
+    [0, 0],
+    [3, 5],
+    [5, 5],
+  ].forEach(([x, y]) =>
+    div.dispatchEvent(new MouseEvent('click', { clientX: x, clientY: y })),
+  );
+}
 
 export { ClickStream };
