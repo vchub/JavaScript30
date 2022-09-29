@@ -7,7 +7,17 @@
 // }
 
 const pr = console.log;
-let { take, reduce, range, filter, map, bindNodeCallback } = require('rxjs');
+let {
+  flatMap,
+  of,
+  from,
+  take,
+  reduce,
+  range,
+  filter,
+  map,
+  bindNodeCallback,
+} = require('rxjs');
 let { assert } = require('chai');
 
 describe('misc', () => {
@@ -16,10 +26,6 @@ describe('misc', () => {
     const r = range(1, 10).pipe(
       filter((x) => x % 2 == 0),
       map((x) => x * 2),
-      // map((x) => {
-      //   pr('in 2nd map, x', x);
-      //   return x;
-      // }),
     );
     r.subscribe((x) => acc.push(x));
     assert.deepEqual([4, 8, 12, 16, 20], acc);
@@ -44,11 +50,15 @@ describe('misc', () => {
         () => pr('Done'),
       );
   });
-});
 
-// range(1, 13)
-//   .pipe(
-//     filter((x) => x % 2 === 1),
-//     map((x) => x + x),
-//   )
-//   .subscribe((x) => pr(x));
+  it('flatMap', () => {
+    from([of(1, 2, 3), from([4, 5, 6])])
+      .pipe(
+        flatMap((x) => x),
+        reduce((acc, x) => [x, ...acc], []),
+      )
+      .subscribe((x) => {
+        assert.deepEqual([1, 2, 3, 4, 5, 6].reverse(), x);
+      });
+  });
+});

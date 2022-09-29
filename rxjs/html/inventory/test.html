@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mocha Tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../test/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+    <script src="../test/mocha/chai.js" type="module"></script>
+    <script src="../test/mocha/mocha.js" type="module"></script>
+
+    <script class="mocha-init" type="module">
+      mocha.setup('bdd');
+      mocha.checkLeaks();
+    </script>
+
+    <!-- libs -->
+    <script src="../../blib/rxjs.umd.min.js"></script>
+
+    <script src="handlers.js" type="module"></script>
+    <script src="inventory.spec.js" type="module"></script>
+    <script class="mocha-exec" type="module">
+      mocha.run();
+    </script>
+
+    <!-- specs -->
+  </body>
+</html>

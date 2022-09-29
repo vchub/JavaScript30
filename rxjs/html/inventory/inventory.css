@@ -1,0 +1,29 @@
+div.pics {
+  margin: 20px;
+}
+#pic {
+  height: 200px;
+  width: 200px;
+  background: lightgrey;
+  border: dotted black;
+}
+#inpic {
+  height: 20px;
+  width: 20px;
+  border: solid black;
+  position: relative;
+  top: 180px;
+  left: 15px;
+}
+
+div.tools {
+  margin: 20px;
+  border: dotted black;
+  width: 200px;
+}
+
+/* .picture { */
+/*   width: 50%; */
+/*   background: url('./pics/01.jpg') bottom center; */
+/*   background-size: cover; */
+/* } */

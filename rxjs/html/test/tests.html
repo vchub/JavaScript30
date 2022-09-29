@@ -10,19 +10,19 @@
   <body>
     <!-- elements for tests -->
     <link rel="stylesheet" href="./test.css" />
-    <div class="mycontent">
-      <div id="_1">_1</div>
-      <div id="_2">_2</div>
-    </div>
+    <!-- <div class="mycontent"> -->
+    <!--   <div id="_1">_1</div> -->
+    <!--   <div id="_2">_2</div> -->
+    <!-- </div> -->
 
     <div id="mocha"></div>
 
     <!-- <script src="https://unpkg.com/chai/chai.js"></script> -->
     <!-- <script src="https://unpkg.com/mocha/mocha.js"></script> -->
-    <script src="mocha/chai.js" type="module"></script>
-    <script src="mocha/mocha.js" type="module"></script>
+    <script src="mocha/chai.js"></script>
+    <script src="mocha/mocha.js"></script>
 
-    <script class="mocha-init" type="module">
+    <script class="mocha-init">
       mocha.setup('bdd');
       mocha.checkLeaks();
     </script>
@@ -30,8 +30,10 @@
     <!-- libs -->
     <script src="../../blib/rxjs.umd.min.js"></script>
 
-    <script src="myobservable.spec.js" type="module"></script>
-    <script class="mocha-exec" type="module">
+    <!-- <script src="myobservable.spec.js" type="module"></script> -->
+    <script src="earthquake.js"></script>
+    <script src="earthquake.spec.js"></script>
+    <script class="mocha-exec">
       mocha.run();
     </script>
 

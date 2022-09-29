@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Try drag and drop</title>
+    <script src="handlers.js" type="module"></script>
+    <link rel="stylesheet" href="./inventory.css" />
+  </head>
+  <body>
+    <div class="content">
+      <div class="pics">
+        <div id="pic" ondrop="dropH(event);" ondragover="dragoverH(event);">
+          <div id="inpic">text</div>
+        </div>
+      </div>
+      <div class="tools">
+        <ul>
+          <li><a draggable="true" href="">tool-1</a></li>
+          <li><a draggable="true" href="">tool-2</a></li>
+          <li><a draggable="true" href="">tool-3</a></li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
