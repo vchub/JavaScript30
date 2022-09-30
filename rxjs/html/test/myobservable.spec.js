@@ -1,7 +1,7 @@
 const pr = console.log;
 let { from, of, range, filter, map, Observable, Subscribe } = rxjs;
 const assert = chai.assert;
-import { ClickStream } from '../click-stream/click-stream.js';
+// import { ClickStream } from '../click-stream/click-stream.js';
 
 // range(1, 1)
 //   .compose(
