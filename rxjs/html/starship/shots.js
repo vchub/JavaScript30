@@ -1,5 +1,6 @@
 const SHOT_SPEED = 15,
-  FIRE_FREQ = 200;
+  FIRE_FREQ = 200,
+  SCORE_INC = 10;
 
 const playerFiring = merge(
   // fromEvent(canvas, 'click'),
@@ -22,7 +23,7 @@ const heroShots = combineLatest([playerFiring, spaceShip]).pipe(
       x: shot.x,
       y: HERO_Y,
     });
-    return acc;
+    return acc.filter(isVisible);
   }, []),
 );
 
@@ -33,12 +34,18 @@ function paintShots(shots, speed, color, direction) {
   });
 }
 
-const paintHeroShots = (shots) =>
-  paintShots(shots, -SHOT_SPEED, '#ffff00', 'up');
+function paintHeroShots(shots, enemies) {
+  shots.forEach((s) => {
+    for (const e of enemies) {
+      if (!e.isDead && collision(s, e)) {
+        scoreSubject.next(SCORE_INC);
+        e.isDead = true;
+        s.y = -1000;
+        break;
+      }
+    }
 
-// function paintHeroShots(shots) {
-//   shots.forEach((s) => {
-//     s.y -= SHOT_SPEED;
-//     drawTriangle(s.x, s.y, 5, '#ffff00', 'up');
-//   });
-// }
+    s.y -= SHOT_SPEED;
+    drawTriangle(s.x, s.y, 5, '#ffff00', 'up');
+  });
+}

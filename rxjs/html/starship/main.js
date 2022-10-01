@@ -1,4 +1,6 @@
 let {
+  BehaviorSubject,
+  takeWhile,
   distinctUntilChanged,
   distinctUntilKeyChanged,
   timestamp,
@@ -46,11 +48,12 @@ canvas.height = window.innerHeight;
 document.body.append(canvas);
 
 // render =====
-function renderScene({ stars, hero, enemy, hshots }) {
+function renderScene({ stars, hero, enemies, hshots, score }) {
   paintStars(stars);
   paintSpaceShip(hero);
-  paintEnemy(enemy);
-  paintHeroShots(hshots);
+  paintEnemy(enemies);
+  paintHeroShots(hshots, enemies);
+  paintScore(score);
 }
 
 // main =====
@@ -60,15 +63,26 @@ function main() {
     spaceShip,
     enemyStream,
     heroShots,
-  ]).pipe(sampleTime(SPEED));
+    score,
+  ]).pipe(
+    sampleTime(SPEED),
+    takeWhile((o) => {
+      let [stars, hero, enemies, hshots, score] = o;
+      return !gameOver(hero, enemies);
+    }),
+    // map((o) => {
+    //   let [stars, hero, enemies, hshots] = o;
+    //   heroShotsToEnemy(hshots, enemies);
+    //   return o;
+    // }),
+  );
 
   const run = () => {
-    Game.subscribe(([stars, hero, enemy, hshots]) =>
-      renderScene({ stars, hero, enemy, hshots }),
+    Game.subscribe(([stars, hero, enemies, hshots, score]) =>
+      renderScene({ stars, hero, enemies, hshots, score }),
     );
   };
-
-  // run();
+  run();
 }
 
 // export module =====
