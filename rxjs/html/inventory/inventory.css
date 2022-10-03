@@ -8,10 +8,11 @@ div.pics {
   border: dotted black;
 }
 #inpic {
-  height: 20px;
-  width: 20px;
+  /* height: 20px; */
+  /* width: 20px; */
+  margin: 5px;
   border: solid black;
-  position: relative;
+  position: absolute;
   top: 180px;
   left: 15px;
 }
