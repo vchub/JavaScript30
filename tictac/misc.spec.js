@@ -47,7 +47,42 @@ describe('primes', () => {
     assert.deepEqual([2, 3, 5, 7, 11, 13, 17, 19], res);
   });
   it('primesMiddle', () => {
-    let res = primesMiddle3();
-    pr('res', res);
+    let res = primesMiddle3(),
+      a = new Array(10).fill(null).map((x, i) => i),
+      exp = new Set(a);
+
+    assert.deepEqual(exp, res);
+  });
+});
+
+describe('tictac', () => {
+  it('terminal', () => {
+    let b = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
+    assert.equal(true, terminal(b));
+    b = ['X', 'O', 'X', 'O', 'X', 'X', 'X', 'X', 'X'];
+    assert.equal(true, terminal(b));
+    b = [null, 'O', 'X', 'O', 'X', 'X', 'X', 'X', 'X'];
+    assert.equal(false, terminal(b));
+
+    b = Array(9).fill(null);
+    assert.equal(false, terminal(b));
+  });
+
+  it('winner and utlity', () => {
+    let b = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
+    assert.equal('X', winner(b));
+    assert.equal(1, utility(b));
+
+    b = ['O', 'X', 'X', 'X', 'O', 'X', 'X', 'X', 'O'];
+    assert.equal('O', winner(b));
+    assert.equal(-1, utility(b));
+
+    b = ['O', 'X', 'X', 'O', 'X', null, 'O', 'X', 'O'];
+    assert.equal('O', winner(b));
+    assert.equal(-1, utility(b));
+
+    b = ['O', 'X', 'X', 'X', 'X', null, 'O', null, 'O'];
+    assert.equal(null, winner(b));
+    assert.equal(0, utility(b));
   });
 });
