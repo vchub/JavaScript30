@@ -35,6 +35,13 @@ function makeMove(world, i) {
   return world;
 }
 
+// from world state let 2 ai agents play against each other
+function aiVsAi(world) {
+  world = aiMove(world);
+  if (!world) return null;
+  setTimeout(() => aiVsAi(world), 500);
+}
+
 function markCell(i, player) {
   document.getElementById(String(i)).textContent = player;
 }
