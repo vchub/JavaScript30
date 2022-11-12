@@ -39,7 +39,7 @@ function makeMove(world, i) {
 function aiVsAi(world) {
   world = aiMove(world);
   if (!world) return null;
-  setTimeout(() => aiVsAi(world), 500);
+  setTimeout(() => aiVsAi(world), 150);
 }
 
 function markCell(i, player) {
@@ -131,14 +131,14 @@ function filterNull(b) {
   }, []);
 }
 
-const Cach = new Map();
+const Cash = new Map();
 const cacheKey = (b, p, i) => JSON.stringify([b, p, i]);
 
 // board, player, cell_i -> Number (score for move into cell_i)
 function score(b, p, i) {
   // check cache
   const k = cacheKey(b, p, i);
-  if (Cach.has(k)) return Cach.get(k);
+  if (Cash.has(k)) return Cash.get(k);
 
   if (terminal(b)) return utility(b);
 
@@ -147,7 +147,7 @@ function score(b, p, i) {
   b1[i] = p;
 
   const res = cs.reduce((acc, c) => (acc += score(b1, nextPlayer(p), c)), 0);
-  Cach.set(k, res);
+  Cash.set(k, res);
   return res;
 }
 
@@ -168,7 +168,7 @@ function minMax(b, p) {
   if (terminal(b)) return [utility(b), null];
 
   const key = JSON.stringify(b);
-  if (Cach.has(key)) return Cach.get(key);
+  if (Cash.has(key)) return Cash.get(key);
 
   let res = null;
   const acts = filterNull(b);
@@ -179,7 +179,7 @@ function minMax(b, p) {
     const scoreActs = acts.map((a) => [minMax(result(b, a, 'O'), 'X'), a]);
     res = min(scoreActs);
   }
-  Cach.set(key, res);
+  Cash.set(key, res);
   return res;
 }
 
