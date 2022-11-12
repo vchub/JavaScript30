@@ -38,6 +38,46 @@ describe('tictac', () => {
     assert.equal(null, winner(b));
     assert.equal(0, utility(b));
   });
+
+  it('max', () => {
+    assert.deepEqual([1, 9], max([[1, 9]]));
+    assert.deepEqual(
+      [1, 9],
+      max([
+        [1, 9],
+        [0, 8],
+      ]),
+    );
+    assert.deepEqual(
+      [3, 9],
+      max([
+        [2, 0],
+        [3, 9],
+        [3, 1],
+        [1, 8],
+      ]),
+    );
+  });
+
+  it('min', () => {
+    assert.deepEqual([1, 9], min([[1, 9]]));
+    assert.deepEqual(
+      [0, 8],
+      min([
+        [1, 9],
+        [0, 8],
+      ]),
+    );
+    assert.deepEqual(
+      [0, 9],
+      min([
+        [2, 0],
+        [3, 9],
+        [0, 9],
+        [1, 8],
+      ]),
+    );
+  });
 });
 
 // int -> [int]

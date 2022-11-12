@@ -96,7 +96,9 @@ function nextPlayer(p) {
 
 // find an optimum move and play
 function aiMove(w) {
+  // const bestC = bruteForce(w.board, w.player);
   const bestC = minMax(w.board, w.player);
+  pr('bestC', bestC);
   return makeMove(w, bestC[1]);
   // return randMove(w);
 }
@@ -122,14 +124,14 @@ function filterNull(b) {
   }, []);
 }
 
-const scoreCache = new Map();
+const Cach = new Map();
 const cacheKey = (b, p, i) => JSON.stringify([b, p, i]);
 
 // board, player, cell_i -> Number (score for move into cell_i)
 function score(b, p, i) {
   // check cache
   const k = cacheKey(b, p, i);
-  if (scoreCache.has(k)) return scoreCache.get(k);
+  if (Cach.has(k)) return Cach.get(k);
 
   if (terminal(b)) return utility(b);
 
@@ -138,14 +140,65 @@ function score(b, p, i) {
   b1[i] = p;
 
   const res = cs.reduce((acc, c) => (acc += score(b1, nextPlayer(p), c)), 0);
-  scoreCache.set(k, res);
+  Cach.set(k, res);
   return res;
 }
 
+// search through all possible acts and assign every act a score = number of
+// ways to win through this act.
 // board, player -> cell with max score
-function minMax(b, p) {
+function bruteForce(b, p) {
   const ss = filterNull(b).map((c) => [score(b, p, c), c]);
   const res = ss.reduce((acc, x) => (acc[0] < x[0] ? x : acc));
   pr('res', res);
   return res;
+}
+
+// search for an act with the best winning score - max for X and min for O
+// assume that both players choose the best act at every step
+// board, player -> (score, action)
+function minMax(b, p) {
+  if (terminal(b)) return [utility(b), null];
+
+  const key = JSON.stringify(b);
+  if (Cach.has(key)) return Cach.get(key);
+
+  let res = null;
+  const acts = filterNull(b);
+  if (p === 'X') {
+    const scoreActs = acts.map((a) => [minMax(result(b, a, 'X'), 'O'), a]);
+    res = max(scoreActs);
+  } else {
+    const scoreActs = acts.map((a) => [minMax(result(b, a, 'O'), 'X'), a]);
+    res = min(scoreActs);
+  }
+  Cach.set(key, res);
+  return res;
+}
+
+// board -> [score, act]
+// function minValue(b) {
+//   const acts = filterNull(b);
+//   const scoreActs = acts.map((a) => [maxValue(result(b, a, 'O')), a]);
+//   return min(scoreActs);
+// }
+
+// // board -> [score, act]
+// function maxValue(b) {
+//   const acts = filterNull(b);
+//   const scoreActs = acts.map((a) => [minValue(result(b, a, 'X')), a]);
+//   return max(scoreActs);
+// }
+
+// [Pair], (Pair, Pair -> bool) -> Pair
+function max(xs, pred = (a, b) => a[0] >= b[0]) {
+  return xs.reduce((acc, x) => (pred(acc, x) ? acc : x));
+}
+const min = (xs) => max(xs, (a, b) => a[0] <= b[0]);
+
+// board, act, player -> board
+function result(b, a, p) {
+  const b1 = [...b];
+  b1[a] = p;
+  return b1;
 }
