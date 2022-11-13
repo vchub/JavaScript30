@@ -105,7 +105,7 @@ function nextPlayer(p) {
 function aiMove(w) {
   // const bestC = bruteForce(w.board, w.player);
   const bestC = minMax(w.board, w.player);
-  pr('bestC', bestC);
+  pr('bestC', bestC, w.player);
   return makeMove(w, bestC[1]);
   // return randMove(w);
 }
@@ -164,31 +164,72 @@ function bruteForce(b, p) {
 // search for an act with the best winning score - max for X and min for O
 // assume that both players choose the best act at every step
 // board, player -> (score, action)
+// function minMax(b, p) {
+//   if (terminal(b)) return [utility(b), null];
+
+//   const key = JSON.stringify(b);
+//   if (Cash.has(key)) return Cash.get(key);
+
+//   let res = null;
+//   const acts = filterNull(b);
+//   if (p === 'X') {
+//     const scoreActs = acts.map((a) => [minMax(result(b, a, 'X'), 'O'), a]);
+//     res = max(scoreActs);
+//   } else {
+//     const scoreActs = acts.map((a) => [minMax(result(b, a, 'O'), 'X'), a]);
+//     res = min(scoreActs);
+//   }
+//   Cash.set(key, res);
+//   return res;
+// }
+
 function minMax(b, p) {
+  if (p === 'X') return maxPlayer(b, Infinity);
+  else return minPlayer(b, -Infinity);
+}
+
+// best act for 'O' search
+// board, Num -> [score, act]
+function minPlayer(b, breakVal) {
   if (terminal(b)) return [utility(b), null];
 
   const key = JSON.stringify(b);
   if (Cash.has(key)) return Cash.get(key);
 
-  let res = null;
-  const acts = filterNull(b);
-  if (p === 'X') {
-    const scoreActs = acts.map((a) => [minMax(result(b, a, 'X'), 'O'), a]);
-    res = max(scoreActs);
-  } else {
-    const scoreActs = acts.map((a) => [minMax(result(b, a, 'O'), 'X'), a]);
-    res = min(scoreActs);
+  let res = [Infinity, null];
+
+  for (const a of filterNull(b)) {
+    const [score, _] = maxPlayer(result(b, a, 'O'), res[0]);
+    if (score < res[0]) {
+      res = [score, a];
+    }
+    if (score < breakVal) break;
   }
   Cash.set(key, res);
   return res;
 }
 
-// board -> [score, act]
-// function minValue(b) {
-//   const acts = filterNull(b);
-//   const scoreActs = acts.map((a) => [maxValue(result(b, a, 'O')), a]);
-//   return min(scoreActs);
-// }
+// best act for 'X' search
+// board, Num -> [score, act]
+function maxPlayer(b, breakVal) {
+  if (terminal(b)) return [utility(b), null];
+
+  const key = JSON.stringify(b);
+  if (Cash.has(key)) return Cash.get(key);
+
+  let res = [-Infinity, null];
+
+  for (const a of filterNull(b)) {
+    const [score, _] = minPlayer(result(b, a, 'X'), res[0]);
+    if (score > res[0]) {
+      res = [score, a];
+    }
+    if (score > breakVal) break;
+  }
+  // pr('X', res, breakVal);
+  Cash.set(key, res);
+  return res;
+}
 
 // // board -> [score, act]
 // function maxValue(b) {
