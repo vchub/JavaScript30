@@ -188,48 +188,96 @@ function minMax(b, p) {
   else return minPlayer(b, -Infinity);
 }
 
+function cachedPlayer(fn) {
+  function f(b, breakVal) {
+    if (terminal(b)) return [utility(b), null];
+
+    const key = JSON.stringify(b);
+    if (Cash.has(key)) return Cash.get(key);
+
+    res = fn(b, breakVal);
+    Cash.set(key, res);
+    return res;
+  }
+  return f;
+}
+
 // best act for 'O' search
 // board, Num -> [score, act]
 function minPlayer(b, breakVal) {
-  if (terminal(b)) return [utility(b), null];
+  function fn(b, breakVal) {
+    let res = [Infinity, null];
 
-  const key = JSON.stringify(b);
-  if (Cash.has(key)) return Cash.get(key);
-
-  let res = [Infinity, null];
-
-  for (const a of filterNull(b)) {
-    const [score, _] = maxPlayer(result(b, a, 'O'), res[0]);
-    if (score < res[0]) {
-      res = [score, a];
+    for (const a of filterNull(b)) {
+      const [score, _] = maxPlayer(result(b, a, 'O'), res[0]);
+      if (score < res[0]) {
+        res = [score, a];
+      }
+      if (score < breakVal) break;
     }
-    if (score < breakVal) break;
+    return res;
   }
-  Cash.set(key, res);
-  return res;
+  return cachedPlayer(fn)(b, breakVal);
 }
+
+function maxPlayer(b, breakVal) {
+  function fn(b, breakVal) {
+    let res = [-Infinity, null];
+
+    for (const a of filterNull(b)) {
+      const [score, _] = minPlayer(result(b, a, 'X'), res[0]);
+      if (score > res[0]) {
+        res = [score, a];
+      }
+      if (score > breakVal) break;
+    }
+    return res;
+  }
+  return cachedPlayer(fn)(b, breakVal);
+}
+
+// best act for 'O' search
+// board, Num -> [score, act]
+// function minPlayer(b, breakVal) {
+//   if (terminal(b)) return [utility(b), null];
+
+//   const key = JSON.stringify(b);
+//   if (Cash.has(key)) return Cash.get(key);
+
+//   let res = [Infinity, null];
+
+//   for (const a of filterNull(b)) {
+//     const [score, _] = maxPlayer(result(b, a, 'O'), res[0]);
+//     if (score < res[0]) {
+//       res = [score, a];
+//     }
+//     if (score < breakVal) break;
+//   }
+//   Cash.set(key, res);
+//   return res;
+// }
 
 // best act for 'X' search
 // board, Num -> [score, act]
-function maxPlayer(b, breakVal) {
-  if (terminal(b)) return [utility(b), null];
+// function maxPlayer(b, breakVal) {
+//   if (terminal(b)) return [utility(b), null];
 
-  const key = JSON.stringify(b);
-  if (Cash.has(key)) return Cash.get(key);
+//   const key = JSON.stringify(b);
+//   if (Cash.has(key)) return Cash.get(key);
 
-  let res = [-Infinity, null];
+//   let res = [-Infinity, null];
 
-  for (const a of filterNull(b)) {
-    const [score, _] = minPlayer(result(b, a, 'X'), res[0]);
-    if (score > res[0]) {
-      res = [score, a];
-    }
-    if (score > breakVal) break;
-  }
-  // pr('X', res, breakVal);
-  Cash.set(key, res);
-  return res;
-}
+//   for (const a of filterNull(b)) {
+//     const [score, _] = minPlayer(result(b, a, 'X'), res[0]);
+//     if (score > res[0]) {
+//       res = [score, a];
+//     }
+//     if (score > breakVal) break;
+//   }
+//   // pr('X', res, breakVal);
+//   Cash.set(key, res);
+//   return res;
+// }
 
 // // board -> [score, act]
 // function maxValue(b) {
